@@ -15,5 +15,6 @@ When a skill mentions a role (for example, "apply the AFK-ready triage label"),
 use the corresponding label string from this table.
 
 The tracker currently also has `bug`, `documentation`, `duplicate`,
-`enhancement`, `good first issue`, `help wanted`, `invalid`, `dependencies`,
-and `docker` labels.
+`enhancement`, `good first issue`, `help wanted`, `invalid`, `question`,
+`dependencies`, and `docker` labels. Use these as categorization labels, not
+as replacements for the five workflow roles above.

@@ -19,6 +19,8 @@ without building an entire system or modifying `flake.lock`:
 
 ```sh
 nix eval .#nixosConfigurations.nixstation.config.system.build.toplevel.drvPath --no-write-lock-file
+nix eval .#nixosConfigurations.homestation.config.system.build.toplevel.drvPath --no-write-lock-file
+nix eval .#nixosConfigurations.wslstation.config.system.build.toplevel.drvPath --no-write-lock-file
 nix eval .#darwinConfigurations.macstation.system --apply 's: s.drvPath' --no-write-lock-file
 ```
 
@@ -48,7 +50,18 @@ sudo nixos-rebuild switch --flake .#homestation
 For ordinary changes in the running WSL instance:
 
 ```sh
-sudo nixos-rebuild switch --flake .#wslstation
+sudo -n nixos-rebuild switch --flake .#wslstation
+```
+
+`wslstation` is passwordless for sudo, so an agent can activate and inspect a
+change without waiting for human input. Use `sudo -n` for privileged commands,
+then check the running generation and the services that matter:
+
+```sh
+sudo -n true
+nixos-version
+systemctl --failed
+docker ps
 ```
 
 The first-install flow intentionally uses `boot` and terminates the WSL
@@ -89,8 +102,9 @@ sudo nixos-rebuild switch --rollback
 ```
 
 If the machine cannot boot the current generation, select a previous generation
-from the boot menu. On WSL, terminate and restart the distribution after a
-`boot`-based change.
+from the boot menu. A WSL `switch` is active immediately; terminate and restart
+the distribution only after a `boot`-based change or when the WSL configuration
+requires it.
 
 For macOS, keep the last known-good nix-darwin generation available and consult
 the installed `darwin-rebuild` help before rolling back; its generation commands

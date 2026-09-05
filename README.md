@@ -64,11 +64,9 @@ wsl --install --from-file nixos.wsl # wherever nixos.wsl was downloaded
 
 #### Post-install
 
-After the initial installation, update your channels to use `nixos-rebuild`:
-
-```nu
-sudo nix-channel --update
-```
+This repository uses explicit flake references and disables channels in the
+managed system configuration. Use the flake commands below rather than
+updating channels as part of routine operation.
 
 If you want to make NixOS your default distribution, run:
 
@@ -129,8 +127,14 @@ Reboot the system.
 Initialize the Nix system inside of NixOS-WSL:
 
 ```sh
-sudo nixos-rebuild boot --flake ~/infrastructure#wslstation
+sudo -n nixos-rebuild boot --flake ~/infrastructure#wslstation
 ```
+
+After the first installation, ordinary changes use `switch` and can be checked
+immediately from the running `wslstation` instance. Its sudo setup is
+passwordless; use `sudo -n` so an agent never waits for a prompt. See
+[`configurations/nixos/wslstation/AGENTS.md`](configurations/nixos/wslstation/AGENTS.md)
+and [`docs/operations.md`](docs/operations.md) for the fast verification loop.
 
 Execute the following commands on Windows to correctly apply the custom username:
 
@@ -155,10 +159,10 @@ For a guided first deployment, start with the [NixOS manual](https://nixos.org/m
 
 | Target | Role | Apply or evaluate with |
 | --- | --- | --- |
-| `nixstation` | Primary NixOS desktop | `sudo nixos-rebuild boot --flake .#nixstation` |
-| `homestation` | NixOS homelab server | `sudo nixos-rebuild boot --flake .#homestation` |
-| `macstation` | macOS via nix-darwin | `sudo darwin-rebuild switch --flake .#macstation` |
-| `wslstation` | NixOS under WSL | `sudo nixos-rebuild boot --flake .#wslstation` |
+| `nixstation` | Primary NixOS desktop | `sudo nixos-rebuild switch --flake .#nixstation` |
+| `homestation` | NixOS homelab server | `sudo nixos-rebuild switch --flake .#homestation` |
+| `macstation` | macOS via nix-darwin | `sudo nix run nix-darwin/master#darwin-rebuild -- switch --flake .#macstation` |
+| `wslstation` | NixOS under WSL | `sudo -n nixos-rebuild switch --flake .#wslstation` |
 
 ## Everyday maintenance
 
@@ -174,6 +178,12 @@ nix eval .#nixosConfigurations.nixstation.config.system.build.toplevel.drvPath -
 
 # Smoke-test the macOS host
 nix eval .#darwinConfigurations.macstation.system --apply 's: s.drvPath' --no-write-lock-file
+
+# On wslstation, apply an ordinary change and inspect the running instance
+sudo -n nixos-rebuild switch --flake .#wslstation
+nixos-version
+systemctl --failed
+docker ps
 ```
 
 ## Further reading

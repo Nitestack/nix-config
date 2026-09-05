@@ -98,13 +98,13 @@ added only when some public app explicitly resolves to the apex, for example
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `caddy.enable` | bool | `true` | Enable generated Caddy ingress |
-| `caddy.image` | string | `caddybuilds/caddy-cloudflare` (pinned) | Caddy image; by default the module uses a build with the Cloudflare DNS plugin |
+| `caddy.image` | string | `"caddy:latest"` | Caddy image; when the homelab module is enabled, `caddy.nix` supplies a pinned build with the Cloudflare DNS plugin unless overridden |
 | `caddy.ports` | list of string | `["80:80" "443:443" "443:443/udp"]` | Host port mappings for the Caddy container |
 | `caddy.tunnelPort` | port | `8080` | Loopback-only HTTP listener used as the Cloudflare Tunnel origin |
 | `caddy.openFirewall` | bool | `true` | Open the firewall for the externally bound Caddy ports |
 | `caddy.environment` | attrs of string | `{}` | Environment variables for the Caddy container |
-| `caddy.environmentFiles` | list of path | `[config.sops.templates."caddy.env".path]` | Environment files for the Caddy container |
-| `caddy.globalConfig` | lines | `acme_dns cloudflare {env.CLOUDFLARE_API_TOKEN}` | Raw global Caddy config prepended before generated hosts |
+| `caddy.environmentFiles` | list of path | `[]` | Environment files for the Caddy container; the homestation host supplies its sops-rendered `caddy.env` file |
+| `caddy.globalConfig` | lines | `""` | Raw global Caddy config prepended before generated hosts; the enabled module supplies the Cloudflare DNS-01 block by default |
 | `caddy.extraHosts` | lines | `""` | Extra hand-written Caddy host handling that should live next to the generated app hosts |
 | `caddy.extraVolumes` | list of string | `[]` | Extra bind mounts or named-volume mounts for the Caddy container |
 
@@ -392,6 +392,12 @@ At evaluation time, `validation.nix` adds runtime assertions:
 - `services.<name>.volumes` with `type = "volume"` must set `volume`
 - Relative bind sources may not escape the app data directory
 - `owner/group/mode` may only be set on relative bind sources
+- App names may contain only letters, digits, hyphens, and underscores
+- A capability may not appear in both `privileges.capabilities.add` and
+  `privileges.capabilities.drop`
+- `homelab.smtp` is either unset or has host, port, from, and username together
+- The homelab module requires Arion's Docker backend
+- Generated Caddy requires native `services.caddy` to remain disabled
 - Exposed hostnames must be globally unique
 - Generated Arion project names must remain unique after `_` to `-` normalization
 - Generated container names must remain unique after `_` to `-` normalization

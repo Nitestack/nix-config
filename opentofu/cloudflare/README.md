@@ -21,11 +21,16 @@ Enter the repo's dev shell so `tofu` is on `PATH`:
 nix develop
 ```
 
-Get the Cloudflare API token (same token Caddy uses for DNS-01 ACME) from
-sops:
+Get the Cloudflare API token (same token Caddy uses for DNS-01 ACME) from sops
+without printing it or writing plaintext to disk. Process substitution feeds it
+directly to `read`; do not replace this with command substitution or a redirect:
 
-```sh
-export CLOUDFLARE_API_TOKEN=$(sops -d --extract '["cloudflare"]["api-token"]' secrets/hosts/homestation/infra.yaml)
+```bash
+IFS= read -r CLOUDFLARE_API_TOKEN < <(
+  sops -d --extract '["cloudflare"]["api-token"]' secrets/hosts/homestation/infra.yaml
+)
+export CLOUDFLARE_API_TOKEN
+trap 'unset CLOUDFLARE_API_TOKEN' EXIT
 ```
 
 ## Everyday use

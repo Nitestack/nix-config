@@ -18,7 +18,7 @@ hostname.
 | Beets | Internal | Music-library management | [`beets/default.nix`](../configurations/nixos/homestation/homelab/beets/default.nix) |
 | Beszel | Public `status.npham.de` | Host and container monitoring | [`beszel.nix`](../configurations/nixos/homestation/homelab/beszel.nix) |
 | Calibre-Web Automated | Public `lib.npham.de` | E-book library and ingestion | [`calibre-web-automated.nix`](../configurations/nixos/homestation/homelab/calibre-web-automated.nix) |
-| Ente | Public `2fa.npham.de` | Ente web application; Museum uses an additional Caddy host | [`ente/default.nix`](../configurations/nixos/homestation/homelab/ente/default.nix) |
+| Ente | Public `2fa.npham.de`; Museum at `ente.npham.de` | Ente web application and Museum API | [`ente/default.nix`](../configurations/nixos/homestation/homelab/ente/default.nix) |
 | FreshRSS | Public `feed.npham.de` | Feed reader | [`freshrss.nix`](../configurations/nixos/homestation/homelab/freshrss.nix) |
 | Glance | Public `dash.npham.de` | Dashboard | [`glance/default.nix`](../configurations/nixos/homestation/homelab/glance/default.nix) |
 | Immich | Public `media.npham.de` | Photo and video management | [`immich.nix`](../configurations/nixos/homestation/homelab/immich.nix) |
