@@ -1,5 +1,5 @@
 {
-  plugin = [ "opencode-models-discovery@1.4.0" ];
+  plugin = [ "opencode-models-discovery@1.5.3" ];
 
   enabled_providers = [
     "litellm-chat"
@@ -17,7 +17,11 @@
         modelsDiscovery = {
           enabled = true;
           modelInfoFormat = "litellm";
-          modelInfoEndpoint = "/v1/model/info";
+          smartModelName = true;
+          cache = {
+            enabled = true;
+            ttlSeconds = 86400;
+          };
           models.excludeBy = [
             {
               field = "id";
@@ -26,14 +30,6 @@
             {
               field = "id";
               match = "^(US-)?(gpt-4|gpt-5|o3-|o4-)";
-            }
-            {
-              field = "id";
-              match = "image";
-            }
-            {
-              field = "id";
-              match = "e5-mistral";
             }
           ];
         };
@@ -49,11 +45,15 @@
         modelsDiscovery = {
           enabled = true;
           modelInfoFormat = "litellm";
-          modelInfoEndpoint = "/v1/model/info";
+          smartModelName = true;
+          cache = {
+            enabled = true;
+            ttlSeconds = 86400;
+          };
           models.includeBy = [
             {
               field = "id";
-              match = "^(gpt-5\\.6|gpt-5-(mini|nano))";
+              match = "^(gpt-5\\.6)";
             }
           ];
         };
@@ -87,31 +87,34 @@
 
   agent = {
     build = {
-      model = "litellm-anthropic/claude-sonnet-5";
-      effort = "max";
+      model = "litellm-responses/gpt-5.6-luna";
+      reasoningEffort = "max";
     };
     plan = {
       model = "litellm-anthropic/claude-opus-5";
-      effort = "high";
+      reasoningEffort = "high";
+      textVerbosity = "medium";
     };
     general = {
       model = "litellm-anthropic/claude-sonnet-5";
-      effort = "high";
+      reasoningEffort = "high";
     };
     explore = {
-      model = "litellm-responses/gpt-5-mini";
+      model = "litellm-chat/qwen3-coder-480b";
       reasoningEffort = "medium";
     };
     compaction = {
-      model = "litellm-responses/gpt-5-mini";
-      reasoningEffort = "high";
+      model = "litellm-chat/qwen-3.6-35b-sovereign";
+      reasoningEffort = "medium";
       textVerbosity = "medium";
     };
     title = {
       model = "litellm-chat/deepseek-v4-flash-sovereign";
+      reasoningEffort = "none";
     };
     summary = {
-      model = "litellm-chat/qwen-3.8-27b-sovereign";
+      model = "litellm-chat/qwen-3.6-35b-sovereign";
+      reasoningEffort = "low";
     };
   };
 }
